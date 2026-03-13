@@ -1,39 +1,81 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>Student Dashboard</title>
-<link rel="stylesheet" href="style.css">
-</head><body onload="loadDashboard()"><h1>Student Dashboard</h1>Semester
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CGPA Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Student Dashboard</h1>
+    </header>
 
-<select id="semester">
-<option>1</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5</option>
-<option>6</option>
-<option>7</option>
-<option>8</option>
-</select><table id="dashTable"><tr>
-<th>Subject</th>
-<th>Credits</th>
-<th>Grade</th>
-</tr><tr>
-<td><input placeholder="Subject"></td>
-<td><input type="number"></td>
-<td>
-<select>
-<option>O</option>
-<option>A+</option>
-<option>A</option>
-<option>B+</option>
-<option>B</option>
-</select>
-</td>
-</tr></table><button onclick="addDashRow()">Add Subject</button>
+    <main>
+        <section class="dashboard-section">
+            <label for="semester-select">Semester:</label>
+            <select id="semester-select">
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+                <option value="3">Semester 3</option>
+                <option value="4">Semester 4</option>
+                <option value="5">Semester 5</option>
+                <option value="6">Semester 6</option>
+                <option value="7">Semester 7</option>
+                <option value="8">Semester 8</option>
+                <option value="9">Semester 9</option>
+                <option value="10">Semester 10</option>
+            </select>
 
-<br><br>
+            <table id="subject-table-dashboard">
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Marks</th>
+                        <th>Credits</th>
+                        <th>Grade</th>
+                    </tr>
+                </thead>
+                <tbody id="subject-tbody">
+                    <tr>
+                        <td><input type="text" placeholder="Subject 1"></td>
+                        <td><input type="number" placeholder="Marks"></td>
+                        <td><input type="number" placeholder="Credits"></td>
+                        <td>
+                            <select>
+                                <option value="10">A+</option>
+                                <option value="9">A</option>
+                                <option value="8">B+</option>
+                                <option value="7">B</option>
+                                <option value="6">C+</option>
+                                <option value="5">C</option>
+                                <option value="4">D</option>
+                                <option value="0">F</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <button id="add-subject-dashboard">Add Subject</button>
+            <button id="calculate-dashboard">Calculate SGPA/CGPA</button>
+            <button id="save-semester">Save Semester</button>
 
-<button onclick="saveSemester()">Save Semester</button>
+            <h2>Semester Summary</h2>
+            <table id="summary-table">
+                <thead>
+                    <tr>
+                        <th>Semester</th>
+                        <th>SGPA</th>
+                        <th>CGPA</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- dynamically filled -->
+                </tbody>
+            </table>
+        </section>
+    </main>
 
-<h2>Semester History</h2><div id="summary"></div><script src="script.js"></script></body>
+    <script src="script.js"></script>
+</body>
 </html>
