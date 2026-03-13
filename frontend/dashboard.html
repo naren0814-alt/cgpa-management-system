@@ -1,0 +1,39 @@
+<!DOCTYPE html><html>
+<head>
+<title>Student Dashboard</title>
+<link rel="stylesheet" href="style.css">
+</head><body onload="loadDashboard()"><h1>Student Dashboard</h1>Semester
+
+<select id="semester">
+<option>1</option>
+<option>2</option>
+<option>3</option>
+<option>4</option>
+<option>5</option>
+<option>6</option>
+<option>7</option>
+<option>8</option>
+</select><table id="dashTable"><tr>
+<th>Subject</th>
+<th>Credits</th>
+<th>Grade</th>
+</tr><tr>
+<td><input placeholder="Subject"></td>
+<td><input type="number"></td>
+<td>
+<select>
+<option>O</option>
+<option>A+</option>
+<option>A</option>
+<option>B+</option>
+<option>B</option>
+</select>
+</td>
+</tr></table><button onclick="addDashRow()">Add Subject</button>
+
+<br><br>
+
+<button onclick="saveSemester()">Save Semester</button>
+
+<h2>Semester History</h2><div id="summary"></div><script src="script.js"></script></body>
+</html>

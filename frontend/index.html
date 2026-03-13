@@ -1,0 +1,53 @@
+<!DOCTYPE html><html>
+<head>
+<title>CGPA Calculator</title>
+<link rel="stylesheet" href="style.css">
+</head><body><h1>CGPA Calculator System</h1><div class="container"><div class="calculator"><h2>Direct CGPA Calculator</h2><table id="subjectTable"><tr>
+<th>Subject</th>
+<th>Credits</th>
+<th>Grade</th>
+</tr><tr>
+<td>Subject 1</td>
+<td><input type="number"></td>
+<td>
+<select>
+<option>O</option>
+<option>A+</option>
+<option>A</option>
+<option>B+</option>
+<option>B</option>
+</select>
+</td>
+</tr></table><button onclick="addSubject()">Add Subject</button>
+
+<br><br>
+
+Previous CGPA
+<input id="prevCgpa" type="number">
+
+Previous Credits
+<input id="prevCredits" type="number">
+
+<br><br>
+
+<select id="formula">
+<option value="9.5">CGPA × 9.5</option>
+<option value="10">CGPA × 10</option>
+</select><br><br>
+
+<button onclick="calculateCGPA()">Calculate</button>
+
+<h3 id="result"></h3></div><div class="auth"><h2>Login</h2><input id="loginUsername" placeholder="Username">
+<input id="loginPassword" type="password" placeholder="Password"><button onclick="login()">Login</button>
+
+<hr><h2>Register</h2><input id="name" placeholder="Name">
+<input id="email" placeholder="Email">
+<input id="phone" placeholder="Phone">
+<input id="college" placeholder="College Name">
+<input id="course" placeholder="Course">
+<input id="regno" placeholder="Register Number">
+<input id="username" placeholder="Username">
+<input id="password" type="password" placeholder="Password"><button onclick="register()">Register</button>
+
+</div></div><script src="script.js"></script></body>
+</html>

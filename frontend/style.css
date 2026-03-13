@@ -1,66 +1,46 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+body{
+font-family:Arial;
+background:#f4f6fb;
+text-align:center;
 }
 
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 20px;
+.container{
+display:flex;
+justify-content:space-around;
+flex-wrap:wrap;
 }
 
-.container {
-    background: white;
-    border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-    padding: 40px;
-    max-width: 600px;
-    width: 100%;
+.calculator,.auth{
+background:white;
+padding:20px;
+margin:20px;
+border-radius:10px;
+box-shadow:0 0 10px rgba(0,0,0,0.1);
+width:400px;
 }
 
-h1 {
-    color: #333;
-    margin-bottom: 30px;
-    text-align: center;
+table{
+margin:auto;
+border-collapse:collapse;
 }
 
-.form-group {
-    margin-bottom: 20px;
+th,td{
+border:1px solid #ccc;
+padding:10px;
 }
 
-label {
-    display: block;
-    margin-bottom: 8px;
-    color: #555;
-    font-weight: 500;
+input,select{
+padding:8px;
+margin:5px;
+width:80%;
 }
 
-input, select {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-button {
-    width: 100%;
-    padding: 12px;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-weight: 600;
-}
-
-button:hover {
-    background: #764ba2;
-    transition: 0.3s ease;
+button{
+padding:10px 20px;
+margin:10px;
+background:#4CAF50;
+color:white;
+border:none;
+border-radius:5px;
+cursor:pointer;
 }
