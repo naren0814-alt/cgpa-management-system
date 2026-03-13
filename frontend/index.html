@@ -1,53 +1,39 @@
-<!DOCTYPE html><html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>CGPA Calculator</title>
 <link rel="stylesheet" href="style.css">
-</head><body><h1>CGPA Calculator System</h1><div class="container"><div class="calculator"><h2>Direct CGPA Calculator</h2><table id="subjectTable"><tr>
-<th>Subject</th>
-<th>Credits</th>
-<th>Grade</th>
-</tr><tr>
-<td>Subject 1</td>
-<td><input type="number"></td>
-<td>
-<select>
-<option>O</option>
-<option>A+</option>
-<option>A</option>
-<option>B+</option>
-<option>B</option>
-</select>
-</td>
-</tr></table><button onclick="addSubject()">Add Subject</button>
+</head>
 
-<br><br>
+<body>
 
-Previous CGPA
-<input id="prevCgpa" type="number">
+<div class="main-container">
 
-Previous Credits
-<input id="prevCredits" type="number">
+<div class="card">
 
-<br><br>
+<h1>🎓 CGPA Calculator</h1>
+<p class="subtitle">Enter your subject marks to calculate CGPA</p>
 
-<select id="formula">
-<option value="9.5">CGPA × 9.5</option>
-<option value="10">CGPA × 10</option>
-</select><br><br>
+<div class="inputs">
 
-<button onclick="calculateCGPA()">Calculate</button>
+<input type="number" id="m1" placeholder="Subject 1 Mark">
+<input type="number" id="m2" placeholder="Subject 2 Mark">
+<input type="number" id="m3" placeholder="Subject 3 Mark">
+<input type="number" id="m4" placeholder="Subject 4 Mark">
+<input type="number" id="m5" placeholder="Subject 5 Mark">
 
-<h3 id="result"></h3></div><div class="auth"><h2>Login</h2><input id="loginUsername" placeholder="Username">
-<input id="loginPassword" type="password" placeholder="Password"><button onclick="login()">Login</button>
+</div>
 
-<hr><h2>Register</h2><input id="name" placeholder="Name">
-<input id="email" placeholder="Email">
-<input id="phone" placeholder="Phone">
-<input id="college" placeholder="College Name">
-<input id="course" placeholder="Course">
-<input id="regno" placeholder="Register Number">
-<input id="username" placeholder="Username">
-<input id="password" type="password" placeholder="Password"><button onclick="register()">Register</button>
+<button onclick="calculateCGPA()">Calculate CGPA</button>
 
-</div></div><script src="script.js"></script></body>
+<h2 id="result">Your CGPA: --</h2>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
 </html>
