@@ -1,5 +1,5 @@
 from flask import Flask,request,jsonify
-
+from flask_cors import CORS
 from cgpa_logic import calculate_sgpa,calculate_cgpa,calculate_percentage
 
 from database import (
@@ -16,7 +16,7 @@ get_dashboard
 )
 
 app = Flask(__name__)
-
+CORS(app)
 create_tables()
 
 

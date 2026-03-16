@@ -1,88 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CGPA Calculator</title>
-    <link rel="stylesheet" href="style.css">
+<title>CGPA System</title>
+<link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-    <header>
-        <h1>CGPA Calculator</h1>
-    </header>
 
-    <main>
-        <!-- Direct CGPA Calculator -->
-        <section class="calculator-section">
-            <h2>Direct CGPA Calculator</h2>
-            <table id="subject-table">
-                <thead>
-                    <tr>
-                        <th>Subject</th>
-                        <th>Marks</th>
-                        <th>Credits</th>
-                        <th>Grade</th>
-                    </tr>
-                </thead>
-                <tbody id="subject-tbody">
-                    <tr>
-                        <td><input type="text" placeholder="Subject 1"></td>
-                        <td><input type="number" placeholder="Marks"></td>
-                        <td><input type="number" placeholder="Credits"></td>
-                        <td>
-                            <select>
-                                <option value="10">A+</option>
-                                <option value="9">A</option>
-                                <option value="8">B+</option>
-                                <option value="7">B</option>
-                                <option value="6">C+</option>
-                                <option value="5">C</option>
-                                <option value="4">D</option>
-                                <option value="0">F</option>
-                            </select>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <button id="add-subject">Add Subject</button>
-            <div class="previous-info">
-                <input type="number" id="prev-cgpa" placeholder="Previous CGPA">
-                <input type="number" id="prev-credits" placeholder="Previous Credits">
-            </div>
-            <select id="percentage-formula">
-                <option value="formula1">Formula 1</option>
-                <option value="formula2">Formula 2</option>
-            </select>
-            <button id="calculate-btn">Calculate</button>
-            <div id="result-display"></div>
-        </section>
+<h1>Student CGPA Management System</h1>
 
-        <!-- Login/Register Section -->
-        <section class="auth-section">
-            <h2>Login / Register</h2>
-            <div class="toggle-buttons">
-                <button id="show-login">Login</button>
-                <button id="show-register">Register</button>
-            </div>
-            <form id="login-form">
-                <input type="text" placeholder="Username" required>
-                <input type="password" placeholder="Password" required>
-                <button type="submit">Login</button>
-            </form>
-            <form id="register-form" style="display:none;">
-                <input type="text" placeholder="Full Name" required>
-                <input type="email" placeholder="Email" required>
-                <input type="tel" placeholder="Phone" required>
-                <input type="text" placeholder="College Name" required>
-                <input type="text" placeholder="Course Name" required>
-                <input type="text" placeholder="Register Number" required>
-                <input type="text" placeholder="Username" required>
-                <input type="password" placeholder="Password" required>
-                <button type="submit">Register</button>
-            </form>
-        </section>
-    </main>
+<button onclick="showCalculator()">Calculator</button>
+<button onclick="showRegister()">Register</button>
+<button onclick="showLogin()">Login</button>
 
-    <script src="script.js"></script>
+<hr>
+
+<!-- CGPA CALCULATOR -->
+<div id="calculatorSection">
+
+<h2>Direct CGPA Calculator</h2>
+
+<table id="subjectTable">
+<tr>
+<th>Subject</th>
+<th>Credits</th>
+<th>Grade</th>
+</tr>
+
+<tr>
+<td><input type="text"></td>
+<td><input type="number"></td>
+<td>
+<select>
+<option>O</option>
+<option>A+</option>
+<option>A</option>
+<option>B+</option>
+<option>B</option>
+<option>C</option>
+</select>
+</td>
+</tr>
+
+</table>
+
+<button onclick="addSubject()">Add Subject</button>
+
+<br><br>
+
+Previous CGPA:
+<input id="prev_cgpa" type="number" value="0">
+
+Previous Credits:
+<input id="prev_credits" type="number" value="0">
+
+<br><br>
+
+<select id="percentage_formula">
+<option value="9.5">CGPA × 9.5</option>
+<option value="10">CGPA × 10</option>
+</select>
+
+<br><br>
+
+<button onclick="calculate()">Calculate</button>
+
+<h3 id="result"></h3>
+
+</div>
+
+<!-- REGISTER -->
+<div id="registerSection" style="display:none">
+
+<h2>Register</h2>
+
+<input id="reg_name" placeholder="Name"><br>
+<input id="reg_email" placeholder="Email"><br>
+<input id="reg_phone" placeholder="Phone"><br>
+<input id="reg_college" placeholder="College"><br>
+<input id="reg_course" placeholder="Course"><br>
+<input id="reg_regno" placeholder="Register Number"><br>
+<input id="reg_username" placeholder="Username"><br>
+<input id="reg_password" type="password" placeholder="Password"><br>
+
+<button onclick="register()">Register</button>
+
+<p id="register_msg"></p>
+
+</div>
+
+<!-- LOGIN -->
+
+<div id="loginSection" style="display:none">
+
+<h2>Login</h2>
+
+<input id="login_username" placeholder="Username"><br>
+<input id="login_password" type="password" placeholder="Password"><br>
+
+<button onclick="login()">Login</button>
+
+<p id="login_msg"></p>
+
+</div>
+
+<script src="script.js"></script>
+
 </body>
 </html>

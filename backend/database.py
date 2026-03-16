@@ -1,6 +1,6 @@
 import sqlite3
 
-DB_NAME = "backend/cgpa_system.db"
+DB_NAME = "cgpa_system.db"
 
 
 def get_connection():

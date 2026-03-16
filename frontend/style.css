@@ -1,74 +1,19 @@
-body {
-    font-family: Arial, sans-serif;
-    margin:0;
-    padding:0;
-    background: #f4f4f9;
+body{
+font-family:Arial;
+margin:40px;
 }
 
-header {
-    background: #3f51b5;
-    color: white;
-    padding: 15px 0;
-    text-align: center;
+table{
+border-collapse:collapse;
+margin-top:10px;
 }
 
-main {
-    padding: 20px;
+td,th{
+border:1px solid #ccc;
+padding:8px;
 }
 
-h1, h2 {
-    margin-bottom: 10px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 15px;
-}
-
-th, td {
-    border: 1px solid #ccc;
-    padding: 8px;
-    text-align: center;
-}
-
-input, select, button {
-    padding: 6px;
-    margin: 4px;
-}
-
-button {
-    cursor: pointer;
-    background: #3f51b5;
-    color: white;
-    border: none;
-    border-radius: 4px;
-}
-
-button:hover {
-    background: #2c387e;
-}
-
-section {
-    background: white;
-    padding: 15px;
-    margin-bottom: 20px;
-    border-radius: 8px;
-}
-
-.auth-section input, .auth-section select {
-    display: block;
-    width: 95%;
-    margin-bottom: 10px;
-}
-
-.toggle-buttons {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 10px;
-}
-
-#result-display {
-    margin-top: 10px;
-    font-weight: bold;
+button{
+padding:8px 15px;
+margin-top:10px;
 }
