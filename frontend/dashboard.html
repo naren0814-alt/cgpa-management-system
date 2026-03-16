@@ -1,88 +1,102 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Student Dashboard</title>
+<title>CGPA Dashboard</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h2>Dashboard</h2>
+<h1>Student Dashboard</h1>
 
-Semester:
-<select id="semester">
-<option>1</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5</option>
-<option>6</option>
-<option>7</option>
-<option>8</option>
-<option>9</option>
-<option>10</option>
-</select>
+<h2 id="welcome"></h2>
 
-<table id="semTable">
+<h3>Enter Subjects</h3>
+
+<table id="subjectTable">
+
 <tr>
-<th>Subject</th>
+<th>S.No</th>
+<th>Subject Name</th>
 <th>Credits</th>
 <th>Grade</th>
 </tr>
+
+<tr>
+<td>1</td>
+
+<td>
+<input type="text" placeholder="Subject 1">
+</td>
+
+<td>
+<input type="number">
+</td>
+
+<td>
+<select>
+<option>O</option>
+<option>A+</option>
+<option>A</option>
+<option>B+</option>
+<option>B</option>
+<option>C</option>
+</select>
+</td>
+
+</tr>
+
 </table>
 
-<button onclick="addSemRow()">Add Subject</button>
+<br>
+
+<button onclick="addSubject()">Add Subject</button>
+<button onclick="removeSubject()">Remove Subject</button>
 <br><br>
+
+Previous CGPA
+<input id="prev_cgpa" type="number" value="0">
+
+Previous Credits
+<input id="prev_credits" type="number" value="0">
+
+<br><br>
+
+<select id="formula">
+<option value="9.5">CGPA × 9.5</option>
+<option value="10">CGPA × 10</option>
+</select>
+
+<br><br>
+
+<button onclick="calculate()">Calculate</button>
+
+<h3 id="result"></h3>
+
+<br>
+
+<h3>Save Semester</h3>
+
+Semester Number
+<input id="semester" type="number" placeholder="Semester">
 
 <button onclick="saveSemester()">Save Semester</button>
 
-<h3 id="sem_result"></h3>
-
-<hr>
+<br><br>
 
 <h2>Semester History</h2>
 
-<table id="history">
+<table border="1" id="historyTable">
+
 <tr>
 <th>Semester</th>
 <th>SGPA</th>
 <th>CGPA</th>
 </tr>
+
 </table>
 
 <script src="script.js"></script>
 
 </body>
 </html>
-
-<script>
-loadDashboard()
-
-function loadDashboard(){
-
-let student_id = localStorage.getItem("student_id")
-
-fetch("http://127.0.0.1:5000/dashboard/"+student_id)
-
-.then(res=>res.json())
-
-.then(data=>{
-
-let table = document.getElementById("historyTable")
-
-data.semesters.forEach(sem => {
-
-let row = table.insertRow()
-
-row.innerHTML = `
-<td>${sem.semester_no}</td>
-<td>${sem.sgpa}</td>
-<td>${sem.cgpa}</td>
-`
-
-})
-
-})
-
-}
-</script>

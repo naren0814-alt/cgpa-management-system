@@ -4,13 +4,14 @@ margin:40px;
 }
 
 table{
+width:70%;
+margin:auto;
 border-collapse:collapse;
-margin-top:10px;
 }
 
-td,th{
-border:1px solid #ccc;
+th,td{
 padding:8px;
+text-align:center;
 }
 
 button{
