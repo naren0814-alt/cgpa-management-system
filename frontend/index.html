@@ -1,34 +1,31 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
 <title>CGPA System</title>
 <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-<h1>Student CGPA Management System</h1>
-
-<button onclick="showCalculator()">Calculator</button>
-<button onclick="showRegister()">Register</button>
-<button onclick="showLogin()">Login</button>
-
-<hr>
-
-<!-- CGPA CALCULATOR -->
-<div id="calculatorSection">
-
-<h2>Direct CGPA Calculator</h2>
-
-<table id="subjectTable">
+</head><body style="font-family:Arial;background:linear-gradient(135deg,#74ebd5,#ACB6E5);text-align:center;"><h1 style="animation:fadeIn 1s;">Student CGPA Management System</h1><!-- MAIN BUTTONS --><button onclick="showCalculator()" style="padding:10px 20px;margin:10px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;transition:0.3s;">
+Calculator
+</button><button onclick="showRegister()" style="padding:10px 20px;margin:10px;border:none;border-radius:8px;background:#2196F3;color:white;cursor:pointer;transition:0.3s;">
+Register
+</button><button onclick="showLogin()" style="padding:10px 20px;margin:10px;border:none;border-radius:8px;background:#ff9800;color:white;cursor:pointer;transition:0.3s;">
+Login
+</button><hr><!-- CGPA CALCULATOR --><div id="calculatorSection" style="
+background:white;
+padding:25px;
+border-radius:10px;
+width:60%;
+margin:auto;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+animation:slideUp 0.8s;
+"><h2>📊 Direct CGPA Calculator</h2><table id="subjectTable" style="margin:auto;width:100%;">
 <tr>
+<th>S.No</th>
 <th>Subject</th>
 <th>Credits</th>
 <th>Grade</th>
 </tr>
-
 <tr>
-<td><input type="text"></td>
+<td>1</td>
+<td>Subject 1</td>
 <td><input type="number"></td>
 <td>
 <select>
@@ -40,11 +37,28 @@
 <option>C</option>
 </select>
 </td>
-</tr>
-
-</table>
-
-<button onclick="addSubject()">Add Subject</button>
+</tr></table><br><button onclick="addSubjectcalc()" style="
+background:#673ab7;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+">
+Add Subject
+</button>
+<button onclick="removeSubject()" style="
+background:#e53935;
+color:white;
+border:none;
+padding:8px 15px;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+">
+Remove Subject
+</button>
 
 <br><br>
 
@@ -56,55 +70,112 @@ Previous Credits:
 
 <br><br>
 
-<select id="percentage_formula">
+<select id="formula">
 <option value="9.5">CGPA × 9.5</option>
 <option value="10">CGPA × 10</option>
-</select>
+</select><br><br>
 
-<br><br>
+<button onclick="dircalculate()" style="
+background:#4CAF50;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
+font-size:16px;
+transition:0.3s;
+">
+Calculate
+</button>
 
-<button onclick="calculate()">Calculate</button>
+<h3 id="result"></h3></div><!-- REGISTER --><div id="registerSection" style="
+display:none;
+background:white;
+padding:25px;
+border-radius:10px;
+width:40%;
+margin:auto;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+animation:fadeIn 0.8s;
+"><h2>📝 Register</h2><input id="reg_name" placeholder="Name"><br><br>
+<input id="reg_email" placeholder="Email"><br><br>
+<input id="reg_phone" placeholder="Phone"><br><br>
+<input id="reg_college" placeholder="College"><br><br>
+<input id="reg_course" placeholder="Course"><br><br>
+<input id="reg_regno" placeholder="Register Number"><br><br>
+<input id="reg_username" placeholder="Username"><br><br>
+<input id="reg_password" type="password" placeholder="Password"><br><br>
 
-<h3 id="result"></h3>
+<button onclick="register()" style="
+background:#2196F3;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+">
+Register
+</button>
 
-</div>
+<p id="register_msg"></p></div><!-- LOGIN --><div id="loginSection" style="
+display:none;
+background:white;
+padding:25px;
+border-radius:10px;
+width:35%;
+margin:auto;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+animation:fadeIn 0.8s;
+"><h2>🔐 Login</h2><input id="login_username" placeholder="Username"><br><br>
+<input id="login_password" type="password" placeholder="Password"><br><br>
 
-<!-- REGISTER -->
-<div id="registerSection" style="display:none">
+<button onclick="login()" style="
+background:#ff9800;
+color:white;
+border:none;
+padding:10px 20px;
+border-radius:6px;
+cursor:pointer;
+transition:0.3s;
+">
+Login
+</button>
 
-<h2>Register</h2>
+<p id="login_msg"></p></div><!-- SIMPLE ANIMATIONS --><style>
 
-<input id="reg_name" placeholder="Name"><br>
-<input id="reg_email" placeholder="Email"><br>
-<input id="reg_phone" placeholder="Phone"><br>
-<input id="reg_college" placeholder="College"><br>
-<input id="reg_course" placeholder="Course"><br>
-<input id="reg_regno" placeholder="Register Number"><br>
-<input id="reg_username" placeholder="Username"><br>
-<input id="reg_password" type="password" placeholder="Password"><br>
+@keyframes fadeIn{
+from{
+opacity:0;
+transform:translateY(20px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
 
-<button onclick="register()">Register</button>
+@keyframes slideUp{
+from{
+opacity:0;
+transform:translateY(40px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
 
-<p id="register_msg"></p>
+button:hover{
+transform:scale(1.05);
+box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
 
-</div>
+input,select{
+padding:8px;
+border-radius:5px;
+border:1px solid #ccc;
+}
 
-<!-- LOGIN -->
-
-<div id="loginSection" style="display:none">
-
-<h2>Login</h2>
-
-<input id="login_username" placeholder="Username">
-<input id="login_password" type="password" placeholder="Password">
-
-<button onclick="login()">Login</button>
-
-<p id="login_msg"></p>
-
-</div>
-
-<script src="script.js"></script>
-
-</body>
+</style><script src="script.js"></script></body>
 </html>

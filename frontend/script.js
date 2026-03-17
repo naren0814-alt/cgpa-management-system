@@ -60,6 +60,32 @@ row.innerHTML = `
 
 }
 
+function addSubjectcalc(){
+
+let table = document.getElementById("subjectTable")
+let rowCount = table.rows.length
+
+let row = table.insertRow()
+
+row.innerHTML = `
+<td>${rowCount}</td>
+<td>Subject ${rowCount}</td>
+<td><input type="number"></td>
+<td>
+<select>
+<option>O</option>
+<option>A+</option>
+<option>A</option>
+<option>B+</option>
+<option>B</option>
+<option>C</option>
+</select>
+</td>
+`
+}
+
+
+
 function removeSubject(){
 
 let table = document.getElementById("subjectTable")
@@ -117,6 +143,33 @@ grade:grade
 return subjects
 }
 
+function getSubjectsCalc(){
+
+let table = document.getElementById("subjectTable")
+
+let subjects = []
+
+for(let i = 1; i < table.rows.length; i++){
+
+let row = table.rows[i]
+
+// subject name is text now, not input
+let name = row.cells[1].innerText
+
+let credit = row.cells[2].children[0].value
+let grade = row.cells[3].children[0].value
+
+subjects.push({
+name: name,
+credit: Number(credit),
+grade: grade
+})
+
+}
+
+return subjects
+}
+
 
 /* ---------------------------
 DIRECT CGPA CALCULATOR
@@ -166,6 +219,49 @@ console.log("Error:", err)
 
 }
 
+function dircalculate(){
+
+let subjects = getSubjectsCalc()
+
+let prev_cgpa = document.getElementById("prev_cgpa").value
+let prev_credits = document.getElementById("prev_credits").value
+let formula = document.getElementById("formula").value
+
+fetch(API + "/calculate", {
+
+method: "POST",
+
+headers: {
+"Content-Type": "application/json"
+},
+
+body: JSON.stringify({
+subjects: subjects,
+prev_cgpa: Number(prev_cgpa),
+prev_credits: Number(prev_credits),
+formula: formula
+})
+
+})
+
+.then(res => res.json())
+
+.then(data => {
+
+console.log("Calculate Response:", data)
+
+document.getElementById("result").innerHTML =
+"SGPA: " + data.sgpa +
+"<br>CGPA: " + data.cgpa +
+"<br>Percentage: " + data.percentage
+
+})
+
+.catch(err => {
+console.log("Error:", err)
+})
+
+}
 
 /* ---------------------------
 REGISTER USER
