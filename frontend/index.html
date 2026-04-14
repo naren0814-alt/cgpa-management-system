@@ -1,181 +1,135 @@
-<!DOCTYPE html><html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>CGPA System</title>
-<link rel="stylesheet" href="style.css">
-</head><body style="font-family:Arial;background:linear-gradient(135deg,#74ebd5,#ACB6E5);text-align:center;"><h1 style="animation:fadeIn 1s;">Student CGPA Management System</h1><!-- MAIN BUTTONS --><button onclick="showCalculator()" style="padding:10px 20px;margin:10px;border:none;border-radius:8px;background:#4CAF50;color:white;cursor:pointer;transition:0.3s;">
-Calculator
-</button><button onclick="showRegister()" style="padding:10px 20px;margin:10px;border:none;border-radius:8px;background:#2196F3;color:white;cursor:pointer;transition:0.3s;">
-Register
-</button><button onclick="showLogin()" style="padding:10px 20px;margin:10px;border:none;border-radius:8px;background:#ff9800;color:white;cursor:pointer;transition:0.3s;">
-Login
-</button><hr><!-- CGPA CALCULATOR --><div id="calculatorSection" style="
-background:white;
-padding:25px;
-border-radius:10px;
-width:60%;
-margin:auto;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-animation:slideUp 0.8s;
-"><h2>📊 Direct CGPA Calculator</h2><table id="subjectTable" style="margin:auto;width:100%;">
-<tr>
-<th>S.No</th>
-<th>Subject</th>
-<th>Credits</th>
-<th>Grade</th>
-</tr>
-<tr>
-<td>1</td>
-<td>Subject 1</td>
-<td><input type="number"></td>
-<td>
-<select>
-<option>O</option>
-<option>A+</option>
-<option>A</option>
-<option>B+</option>
-<option>B</option>
-<option>C</option>
-</select>
-</td>
-</tr></table><br><button onclick="addSubjectcalc()" style="
-background:#673ab7;
-color:white;
-border:none;
-padding:8px 15px;
-border-radius:6px;
-cursor:pointer;
-transition:0.3s;
-">
-Add Subject
-</button>
-<button onclick="removeSubject()" style="
-background:#e53935;
-color:white;
-border:none;
-padding:8px 15px;
-border-radius:6px;
-cursor:pointer;
-transition:0.3s;
-">
-Remove Subject
-</button>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student College Result Management System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <div class="smoke-bg">
+      <div class="smoke-orb smoke-orb-1"></div>
+      <div class="smoke-orb smoke-orb-2"></div>
+      <div class="smoke-orb smoke-orb-3"></div>
+    </div>
 
-<br><br>
+    <div class="container">
+      <nav class="top-nav">
+        <div class="brand">
+          <div class="brand-badge">CG</div>
+          <div class="brand-copy">
+            <h1>Result Management</h1>
+            <p>Student CGPA tracking made simple</p>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <a class="nav-link active" href="index.html">Home</a>
+          <a class="nav-link" href="calculator.html">Calculator</a>
+        </div>
+      </nav>
 
-Previous CGPA:
-<input id="prev_cgpa" type="number" value="0">
+      <section class="hero-grid">
+        <div>
+          <div class="pill">Semester Tracking</div>
+          <h2 class="hero-title">Student College Result <span>Management System</span></h2>
+          <p class="hero-copy">Register, log in, calculate SGPA and CGPA, then save each semester with subject-wise data and see the complete academic history in one place.</p>
 
-Previous Credits:
-<input id="prev_credits" type="number" value="0">
+          <div class="feature-row">
+            <div class="pill">Direct CGPA Calculator</div>
+            <div class="pill">Semester History</div>
+            <div class="pill">Profile + Edit Tools</div>
+          </div>
 
-<br><br>
+          <div class="hero-actions">
+            <a class="primary-btn" href="calculator.html">Open Calculator</a>
+            <button class="secondary-btn" type="button" id="switchToRegister">Create Account</button>
+          </div>
+        </div>
 
-<select id="formula">
-<option value="9.5">CGPA × 9.5</option>
-<option value="10">CGPA × 10</option>
-</select><br><br>
+        <div class="glass-card auth-card">
+          <div class="tab-bar">
+            <button class="tab-btn active" type="button" id="loginTab">Login</button>
+            <button class="tab-btn" type="button" id="registerTab">Register</button>
+          </div>
 
-<button onclick="dircalculate()" style="
-background:#4CAF50;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
-font-size:16px;
-transition:0.3s;
-">
-Calculate
-</button>
+          <form id="loginForm" class="fade-panel">
+            <h3 class="mini-title">Welcome back</h3>
+            <p class="soft-text">Use your account to open the dashboard and manage semester records.</p>
 
-<h3 id="result"></h3></div><!-- REGISTER --><div id="registerSection" style="
-display:none;
-background:white;
-padding:25px;
-border-radius:10px;
-width:40%;
-margin:auto;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-animation:fadeIn 0.8s;
-"><h2>📝 Register</h2><input id="reg_name" placeholder="Name"><br><br>
-<input id="reg_email" placeholder="Email"><br><br>
-<input id="reg_phone" placeholder="Phone"><br><br>
-<input id="reg_college" placeholder="College"><br><br>
-<input id="reg_course" placeholder="Course"><br><br>
-<input id="reg_regno" placeholder="Register Number"><br><br>
-<input id="reg_username" placeholder="Username"><br><br>
-<input id="reg_password" type="password" placeholder="Password"><br><br>
+            <div class="input-wrap">
+              <label for="login_username">Username</label>
+              <input id="login_username" type="text" placeholder="Enter username" required>
+            </div>
+            <div class="input-wrap">
+              <label for="login_password">Password</label>
+              <input id="login_password" type="password" placeholder="Enter password" required>
+            </div>
 
-<button onclick="register()" style="
-background:#2196F3;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
-transition:0.3s;
-">
-Register
-</button>
+            <button class="primary-btn" type="submit">Login</button>
+            <div id="login_msg" class="form-message"></div>
+          </form>
 
-<p id="register_msg"></p></div><!-- LOGIN --><div id="loginSection" style="
-display:none;
-background:white;
-padding:25px;
-border-radius:10px;
-width:35%;
-margin:auto;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
-animation:fadeIn 0.8s;
-"><h2>🔐 Login</h2><input id="login_username" placeholder="Username"><br><br>
-<input id="login_password" type="password" placeholder="Password"><br><br>
+          <form id="registerForm" class="hidden">
+            <h3 class="mini-title">Create your profile</h3>
+            <p class="soft-text">Your academic details will be used across the dashboard and saved semesters.</p>
 
-<button onclick="login()" style="
-background:#ff9800;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
-transition:0.3s;
-">
-Login
-</button>
+            <div class="field-grid">
+              <div class="input-wrap">
+                <label for="reg_name">Full Name</label>
+                <input id="reg_name" type="text" placeholder="Full name" required>
+              </div>
+              <div class="input-wrap">
+                <label for="reg_email">Email</label>
+                <input id="reg_email" type="email" placeholder="Email address" required>
+              </div>
+            </div>
 
-<p id="login_msg"></p></div><!-- SIMPLE ANIMATIONS --><style>
+            <div class="field-grid">
+              <div class="input-wrap">
+                <label for="reg_phone">Phone</label>
+                <input id="reg_phone" type="text" placeholder="Phone number">
+              </div>
+              <div class="input-wrap">
+                <label for="reg_college">College</label>
+                <input id="reg_college" type="text" placeholder="College name">
+              </div>
+            </div>
 
-@keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(20px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
+            <div class="field-grid">
+              <div class="input-wrap">
+                <label for="reg_course">Course</label>
+                <input id="reg_course" type="text" placeholder="Course name">
+              </div>
+              <div class="input-wrap">
+                <label for="reg_regno">Register Number</label>
+                <input id="reg_regno" type="text" placeholder="Register number" required>
+              </div>
+            </div>
 
-@keyframes slideUp{
-from{
-opacity:0;
-transform:translateY(40px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
+            <div class="field-grid">
+              <div class="input-wrap">
+                <label for="reg_username">Username</label>
+                <input id="reg_username" type="text" placeholder="Choose username" required>
+              </div>
+              <div class="input-wrap">
+                <label for="reg_password">Password</label>
+                <input id="reg_password" type="password" placeholder="Create password" required>
+              </div>
+            </div>
 
-button:hover{
-transform:scale(1.05);
-box-shadow:0 5px 15px rgba(0,0,0,0.2);
-}
+            <button class="primary-btn" type="submit">Register</button>
+            <div id="register_msg" class="form-message"></div>
+          </form>
+        </div>
+      </section>
+    </div>
+  </div>
 
-input,select{
-padding:8px;
-border-radius:5px;
-border:1px solid #ccc;
-}
-
-</style><script src="script.js"></script></body>
+  <script src="script.js"></script>
+</body>
 </html>
+

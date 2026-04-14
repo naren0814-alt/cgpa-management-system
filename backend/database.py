@@ -212,14 +212,200 @@ def get_dashboard(student_id):
     cursor = conn.cursor()
 
     cursor.execute("""
-    SELECT semester_no,sgpa,cgpa
+    SELECT id,semester_no,sgpa,cgpa,total_credits
     FROM semesters
     WHERE student_id=?
     ORDER BY semester_no
     """,(student_id,))
 
-    rows = cursor.fetchall()
+    semesters = []
+
+    for row in cursor.fetchall():
+        semester = dict(row)
+
+        cursor.execute("""
+        SELECT subject_name,credit,grade
+        FROM subjects
+        WHERE semester_id=?
+        ORDER BY id
+        """,(row["id"],))
+
+        semester["subjects"] = [dict(subject) for subject in cursor.fetchall()]
+        semesters.append(semester)
 
     conn.close()
 
-    return [dict(row) for row in rows]
+    return semesters
+
+
+def get_student_profile(student_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id,name,email,phone,college,course,register_no,username
+    FROM students
+    WHERE id=?
+    """,(student_id,))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row:
+        return dict(row)
+
+    return None
+
+
+def update_student_profile(student_id,data):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    UPDATE students
+    SET name=?,
+        email=?,
+        phone=?,
+        college=?,
+        course=?,
+        register_no=?
+    WHERE id=?
+    """,(
+        data["name"],
+        data["email"],
+        data["phone"],
+        data["college"],
+        data["course"],
+        data["register_no"],
+        student_id
+    ))
+
+    conn.commit()
+    conn.close()
+
+
+def get_previous_semester(student_id,semester_no):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT semester_no,cgpa,total_credits
+    FROM semesters
+    WHERE student_id=? AND semester_no < ?
+    ORDER BY semester_no DESC
+    LIMIT 1
+    """,(student_id,semester_no))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row:
+        return dict(row)
+
+    return None
+
+
+def get_student_semester_rows(student_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id,semester_no
+    FROM semesters
+    WHERE student_id=?
+    ORDER BY semester_no
+    """,(student_id,))
+
+    rows = [dict(row) for row in cursor.fetchall()]
+
+    conn.close()
+
+    return rows
+
+
+def get_subjects_by_semester(semester_id):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT subject_name,credit,grade
+    FROM subjects
+    WHERE semester_id=?
+    ORDER BY id
+    """,(semester_id,))
+
+    rows = [dict(row) for row in cursor.fetchall()]
+
+    conn.close()
+
+    return rows
+
+
+def update_semester_totals(semester_id,sgpa,cgpa,credits):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    UPDATE semesters
+    SET sgpa=?,
+        cgpa=?,
+        total_credits=?
+    WHERE id=?
+    """,(sgpa,cgpa,credits,semester_id))
+
+    conn.commit()
+    conn.close()
+
+
+def get_semester_id(student_id,semester_no):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    SELECT id
+    FROM semesters
+    WHERE student_id=? AND semester_no=?
+    """,(student_id,semester_no))
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    if row:
+        return row["id"]
+
+    return None
+
+
+def replace_subjects(semester_id,subjects):
+
+    conn = get_connection()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+    DELETE FROM subjects
+    WHERE semester_id=?
+    """,(semester_id,))
+
+    for subject in subjects:
+        name = subject.get("name","")
+        credit = subject["credit"]
+        grade = subject["grade"]
+
+        cursor.execute("""
+        INSERT INTO subjects
+        (semester_id,subject_name,credit,grade)
+        VALUES (?,?,?,?)
+        """,(semester_id,name,credit,grade))
+
+    conn.commit()
+    conn.close()

@@ -12,12 +12,44 @@ semester_exists,
 save_semester,
 save_subjects,
 get_last_semester,
-get_dashboard
+get_dashboard,
+get_student_profile,
+update_student_profile,
+get_previous_semester,
+get_student_semester_rows,
+get_subjects_by_semester,
+update_semester_totals,
+get_semester_id,
+replace_subjects
 )
 
 app = Flask(__name__)
 CORS(app)
 create_tables()
+
+
+def recompute_student_progress(student_id):
+
+    prev_cgpa = 0
+    prev_credits = 0
+
+    for semester in get_student_semester_rows(student_id):
+        subjects = [
+            {
+                "name": subject["subject_name"],
+                "credit": subject["credit"],
+                "grade": subject["grade"]
+            }
+            for subject in get_subjects_by_semester(semester["id"])
+        ]
+
+        sgpa,credits = calculate_sgpa(subjects)
+        cgpa = calculate_cgpa(prev_cgpa,prev_credits,sgpa,credits)
+
+        update_semester_totals(semester["id"],sgpa,cgpa,credits)
+
+        prev_cgpa = cgpa
+        prev_credits += credits
 
 
 @app.route("/")
@@ -127,44 +159,61 @@ def calculate():
 @app.route("/save-semester",methods=["POST"])
 def save_sem():
 
-    data=request.json
+    try:
 
-    student_id=data["student_id"]
-    semester_no=data["semester"]
-    subjects=data["subjects"]
+        data=request.json
 
-    if semester_exists(student_id,semester_no):
+        student_id=data["student_id"]
+        semester_no=data["semester"]
+        subjects=data["subjects"]
+
+        if semester_exists(student_id,semester_no):
+
+            return jsonify({
+                "status":"error",
+                "message":"Semester already saved"
+            }),400
+
+        sgpa,credits=calculate_sgpa(subjects)
+
+        prev_cgpa,prev_credits=get_last_semester(student_id)
+
+        cgpa=calculate_cgpa(
+            prev_cgpa,
+            prev_credits,
+            sgpa,
+            credits
+        )
+
+        semester_id=save_semester(
+            student_id,
+            semester_no,
+            sgpa,
+            cgpa,
+            credits
+        )
+
+        save_subjects(semester_id,subjects)
+        recompute_student_progress(student_id)
+
+        updated = get_dashboard(student_id)
+        current = next(
+            (semester for semester in updated if semester["semester_no"] == semester_no),
+            None
+        )
+
+        return jsonify({
+            "status":"success",
+            "message":"Semester saved successfully",
+            "semester":current
+        })
+
+    except ValueError as e:
 
         return jsonify({
             "status":"error",
-            "message":"Semester already saved"
+            "message":str(e)
         }),400
-
-    sgpa,credits=calculate_sgpa(subjects)
-
-    prev_cgpa,prev_credits=get_last_semester(student_id)
-
-    cgpa=calculate_cgpa(
-        prev_cgpa,
-        prev_credits,
-        sgpa,
-        credits
-    )
-
-    semester_id=save_semester(
-        student_id,
-        semester_no,
-        sgpa,
-        cgpa,
-        credits
-    )
-
-    save_subjects(semester_id,subjects)
-
-    return jsonify({
-        "sgpa":sgpa,
-        "cgpa":cgpa
-    })
 
 
 @app.route("/dashboard/<int:student_id>")
@@ -175,6 +224,97 @@ def dashboard(student_id):
     return jsonify({
         "semesters":data
     })
+
+
+@app.route("/student/<int:student_id>")
+def student_profile(student_id):
+
+    profile = get_student_profile(student_id)
+
+    if not profile:
+        return jsonify({
+            "status":"error",
+            "message":"Student not found"
+        }),404
+
+    return jsonify({
+        "status":"success",
+        "profile":profile
+    })
+
+
+@app.route("/student/<int:student_id>",methods=["PUT"])
+def update_profile(student_id):
+
+    data = request.json
+    update_student_profile(student_id,data)
+
+    return jsonify({
+        "status":"success",
+        "message":"Profile updated successfully"
+    })
+
+
+@app.route("/semester-context/<int:student_id>/<int:semester_no>")
+def semester_context(student_id,semester_no):
+
+    previous = get_previous_semester(student_id,semester_no)
+
+    if not previous:
+        return jsonify({
+            "status":"success",
+            "previous_cgpa":0,
+            "previous_credits":0,
+            "previous_semester":None
+        })
+
+    return jsonify({
+        "status":"success",
+        "previous_cgpa":previous["cgpa"],
+        "previous_credits":previous["total_credits"],
+        "previous_semester":previous["semester_no"]
+    })
+
+
+@app.route("/update-semester",methods=["PUT"])
+def update_semester_data():
+
+    try:
+        data = request.json
+
+        student_id = data["student_id"]
+        semester_no = data["semester"]
+        subjects = data["subjects"]
+
+        semester_id = get_semester_id(student_id,semester_no)
+
+        if not semester_id:
+            return jsonify({
+                "status":"error",
+                "message":"Semester not found"
+            }),404
+
+        replace_subjects(semester_id,subjects)
+        recompute_student_progress(student_id)
+
+        updated = get_dashboard(student_id)
+        current = next(
+            (semester for semester in updated if semester["semester_no"] == semester_no),
+            None
+        )
+
+        return jsonify({
+            "status":"success",
+            "message":"Semester updated successfully",
+            "semester":current
+        })
+
+    except ValueError as e:
+
+        return jsonify({
+            "status":"error",
+            "message":str(e)
+        }),400
 
 
 if __name__=="__main__":

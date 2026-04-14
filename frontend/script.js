@@ -1,481 +1,576 @@
-const API = "http://127.0.0.1:5000"
+﻿const API = "http://127.0.0.1:5000";
 
-/* ---------------------------
-SECTION SWITCHING
---------------------------- */
+const dashboardState = {
+  semesters: [],
+  editingSemester: null
+};
 
-function showCalculator(){
-document.getElementById("calculatorSection").style.display="block"
-document.getElementById("registerSection").style.display="none"
-document.getElementById("loginSection").style.display="none"
+async function apiRequest(path, options = {}) {
+  const response = await fetch(API + path, options);
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
 }
 
-function showRegister(){
-document.getElementById("calculatorSection").style.display="none"
-document.getElementById("registerSection").style.display="block"
-document.getElementById("loginSection").style.display="none"
+function setMessage(elementId, message, type = "") {
+  const element = document.getElementById(elementId);
+  if (!element) {
+    return;
+  }
+
+  element.textContent = message || "";
+  element.className = "form-message" + (type ? ` ${type}` : "");
 }
 
-function showLogin(){
-document.getElementById("calculatorSection").style.display="none"
-document.getElementById("registerSection").style.display="none"
-document.getElementById("loginSection").style.display="block"
+function switchAuthTab(showLogin) {
+  const loginForm = document.getElementById("loginForm");
+  const registerForm = document.getElementById("registerForm");
+  const loginTab = document.getElementById("loginTab");
+  const registerTab = document.getElementById("registerTab");
+
+  if (!loginForm || !registerForm || !loginTab || !registerTab) {
+    return;
+  }
+
+  loginForm.classList.toggle("hidden", !showLogin);
+  registerForm.classList.toggle("hidden", showLogin);
+  loginForm.classList.toggle("fade-panel", showLogin);
+  registerForm.classList.toggle("fade-panel", !showLogin);
+  loginTab.classList.toggle("active", showLogin);
+  registerTab.classList.toggle("active", !showLogin);
 }
 
-
-/* ---------------------------
-ADD SUBJECT ROW
---------------------------- */
-
-function addSubject(){
-
-let table = document.getElementById("subjectTable")
-
-let rowCount = table.rows.length
-
-let row = table.insertRow()
-
-row.innerHTML = `
-<td>${rowCount}</td>
-
-<td>
-<input type="text" placeholder="Subject ${rowCount}">
-</td>
-
-<td>
-<input type="number">
-</td>
-
-<td>
-<select>
-<option>O</option>
-<option>A+</option>
-<option>A</option>
-<option>B+</option>
-<option>B</option>
-<option>C</option>
-</select>
-</td>
-`
-
+function createSubjectRow(index) {
+  return `
+    <tr>
+      <td>${index}</td>
+      <td><input type="text" placeholder="Subject ${index}"></td>
+      <td><input type="number" min="0" step="0.5" placeholder="Credits"></td>
+      <td>
+        <select>
+          <option>O</option>
+          <option>A+</option>
+          <option>A</option>
+          <option>B+</option>
+          <option>B</option>
+          <option>C</option>
+        </select>
+      </td>
+    </tr>
+  `;
 }
 
-function addSubjectcalc(){
+function renumberTable(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return;
+  }
 
-let table = document.getElementById("subjectTable")
-let rowCount = table.rows.length
-
-let row = table.insertRow()
-
-row.innerHTML = `
-<td>${rowCount}</td>
-<td>Subject ${rowCount}</td>
-<td><input type="number"></td>
-<td>
-<select>
-<option>O</option>
-<option>A+</option>
-<option>A</option>
-<option>B+</option>
-<option>B</option>
-<option>C</option>
-</select>
-</td>
-`
+  Array.from(table.querySelectorAll("tbody tr")).forEach((row, index) => {
+    row.cells[0].textContent = index + 1;
+    const nameInput = row.cells[1].querySelector("input");
+    if (nameInput && !nameInput.value.trim()) {
+      nameInput.placeholder = `Subject ${index + 1}`;
+    }
+  });
 }
 
+function addSubjectRow(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return;
+  }
 
-
-function removeSubject(){
-
-let table = document.getElementById("subjectTable")
-
-if(table.rows.length > 2){
-
-table.deleteRow(table.rows.length - 1)
-
-updateSerialNumbers()
-
+  const tbody = table.querySelector("tbody");
+  const index = tbody.rows.length + 1;
+  tbody.insertAdjacentHTML("beforeend", createSubjectRow(index));
 }
 
+function removeSubjectRow(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return;
+  }
+
+  const tbody = table.querySelector("tbody");
+  if (tbody.rows.length > 1) {
+    tbody.deleteRow(tbody.rows.length - 1);
+    renumberTable(tableId);
+  }
 }
 
-function updateSerialNumbers(){
+function getSubjects(tableId) {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return [];
+  }
 
-let table = document.getElementById("subjectTable")
-
-for(let i = 1; i < table.rows.length; i++){
-
-table.rows[i].cells[0].innerText = i
-
-table.rows[i].cells[1].children[0].placeholder = "Subject " + i
-
+  return Array.from(table.querySelectorAll("tbody tr")).map((row, index) => ({
+    name: row.cells[1].querySelector("input").value.trim() || `Subject ${index + 1}`,
+    credit: Number(row.cells[2].querySelector("input").value),
+    grade: row.cells[3].querySelector("select").value
+  }));
 }
 
+function fillSubjectTable(tableId, subjects) {
+  const table = document.getElementById(tableId);
+  if (!table) {
+    return;
+  }
+
+  const tbody = table.querySelector("tbody");
+  const rows = subjects.length ? subjects : [{ name: "", credit: "", grade: "O" }];
+
+  tbody.innerHTML = rows.map((subject, index) => `
+    <tr>
+      <td>${index + 1}</td>
+      <td><input type="text" placeholder="Subject ${index + 1}" value="${subject.name || ""}"></td>
+      <td><input type="number" min="0" step="0.5" placeholder="Credits" value="${subject.credit ?? ""}"></td>
+      <td>
+        <select>
+          <option ${subject.grade === "O" ? "selected" : ""}>O</option>
+          <option ${subject.grade === "A+" ? "selected" : ""}>A+</option>
+          <option ${subject.grade === "A" ? "selected" : ""}>A</option>
+          <option ${subject.grade === "B+" ? "selected" : ""}>B+</option>
+          <option ${subject.grade === "B" ? "selected" : ""}>B</option>
+          <option ${subject.grade === "C" ? "selected" : ""}>C</option>
+        </select>
+      </td>
+    </tr>
+  `).join("");
 }
 
-/* ---------------------------
-GET SUBJECTS FROM TABLE
---------------------------- */
+function renderResult(prefix, data) {
+  const container = document.getElementById(`${prefix}_result`);
+  if (!container) {
+    return;
+  }
 
-function getSubjects(){
-
-let table=document.getElementById("subjectTable")
-
-let subjects=[]
-
-for(let i=1;i<table.rows.length;i++){
-
-let row=table.rows[i]
-
-let name=row.cells[1].children[0].value
-let credit=row.cells[2].children[0].value
-let grade=row.cells[3].children[0].value
-
-subjects.push({
-name:name,
-credit:Number(credit),
-grade:grade
-})
-
+  document.getElementById(`${prefix === "calculator" ? "calc" : "dash"}_sgpa`).textContent = data.sgpa;
+  document.getElementById(`${prefix === "calculator" ? "calc" : "dash"}_cgpa`).textContent = data.cgpa;
+  document.getElementById(`${prefix === "calculator" ? "calc" : "dash"}_percentage`).textContent = data.percentage;
+  container.style.display = "grid";
 }
 
-return subjects
+async function calculateForTable(options) {
+  const payload = {
+    subjects: getSubjects(options.tableId),
+    prev_cgpa: Number(document.getElementById(options.prevCgpaId).value),
+    prev_credits: Number(document.getElementById(options.prevCreditsId).value),
+    formula: document.getElementById(options.formulaId).value
+  };
+
+  const data = await apiRequest("/calculate", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload)
+  });
+
+  renderResult(options.resultPrefix, data);
+  setMessage(options.messageId, "Calculated successfully.", "success");
 }
 
-function getSubjectsCalc(){
+async function handleRegister(event) {
+  event.preventDefault();
 
-let table = document.getElementById("subjectTable")
+  const payload = {
+    name: document.getElementById("reg_name").value.trim(),
+    email: document.getElementById("reg_email").value.trim(),
+    phone: document.getElementById("reg_phone").value.trim(),
+    college: document.getElementById("reg_college").value.trim(),
+    course: document.getElementById("reg_course").value.trim(),
+    register_no: document.getElementById("reg_regno").value.trim(),
+    username: document.getElementById("reg_username").value.trim(),
+    password: document.getElementById("reg_password").value
+  };
 
-let subjects = []
+  try {
+    const data = await apiRequest("/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-for(let i = 1; i < table.rows.length; i++){
-
-let row = table.rows[i]
-
-// subject name is text now, not input
-let name = row.cells[1].innerText
-
-let credit = row.cells[2].children[0].value
-let grade = row.cells[3].children[0].value
-
-subjects.push({
-name: name,
-credit: Number(credit),
-grade: grade
-})
-
+    setMessage("register_msg", data.warning ? `${data.message}. ${data.warning}` : data.message, "success");
+    switchAuthTab(true);
+  } catch (error) {
+    setMessage("register_msg", error.message, "error");
+  }
 }
 
-return subjects
+async function handleLogin(event) {
+  event.preventDefault();
+
+  try {
+    const data = await apiRequest("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: document.getElementById("login_username").value.trim(),
+        password: document.getElementById("login_password").value
+      })
+    });
+
+    localStorage.setItem("student_id", data.student_id);
+    localStorage.setItem("student_name", data.name);
+    window.location.href = "dashboard.html";
+  } catch (error) {
+    setMessage("login_msg", error.message, "error");
+  }
 }
 
+function switchDashboardPanel(panelId) {
+  document.querySelectorAll(".sidebar-btn").forEach((button) => {
+    button.classList.toggle("active", button.dataset.panel === panelId);
+  });
 
-/* ---------------------------
-DIRECT CGPA CALCULATOR
---------------------------- */
-
-function calculate(){
-
-let subjects = getSubjects()
-
-let prev_cgpa = document.getElementById("prev_cgpa").value
-let prev_credits = document.getElementById("prev_credits").value
-let formula = document.getElementById("formula").value
-
-fetch(API + "/calculate", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-subjects: subjects,
-prev_cgpa: Number(prev_cgpa),
-prev_credits: Number(prev_credits),
-formula: formula
-})
-
-})
-
-.then(res => res.json())
-
-.then(data => {
-
-console.log("Calculate Response:", data)
-
-document.getElementById("result").innerHTML =
-"SGPA: " + data.sgpa +
-"<br>CGPA: " + data.cgpa +
-"<br>Percentage: " + data.percentage
-
-})
-
-.catch(err => {
-console.log("Error:", err)
-})
-
+  ["profilePanel", "semesterPanel", "historyPanel"].forEach((id) => {
+    const section = document.getElementById(id);
+    if (section) {
+      section.classList.toggle("hidden", id !== panelId);
+    }
+  });
 }
 
-function dircalculate(){
-
-let subjects = getSubjectsCalc()
-
-let prev_cgpa = document.getElementById("prev_cgpa").value
-let prev_credits = document.getElementById("prev_credits").value
-let formula = document.getElementById("formula").value
-
-fetch(API + "/calculate", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-subjects: subjects,
-prev_cgpa: Number(prev_cgpa),
-prev_credits: Number(prev_credits),
-formula: formula
-})
-
-})
-
-.then(res => res.json())
-
-.then(data => {
-
-console.log("Calculate Response:", data)
-
-document.getElementById("result").innerHTML =
-"SGPA: " + data.sgpa +
-"<br>CGPA: " + data.cgpa +
-"<br>Percentage: " + data.percentage
-
-})
-
-.catch(err => {
-console.log("Error:", err)
-})
-
+function getStudentId() {
+  return Number(localStorage.getItem("student_id") || 0);
 }
 
-/* ---------------------------
-REGISTER USER
---------------------------- */
+function updateSidebarSummary() {
+  const summary = document.getElementById("sidebarSummary");
+  if (!summary) {
+    return;
+  }
 
-function register(){
-
-let data={
-
-name:document.getElementById("reg_name").value,
-email:document.getElementById("reg_email").value,
-phone:document.getElementById("reg_phone").value,
-college:document.getElementById("reg_college").value,
-course:document.getElementById("reg_course").value,
-register_no:document.getElementById("reg_regno").value,
-username:document.getElementById("reg_username").value,
-password:document.getElementById("reg_password").value
-
+  const totalSemesters = dashboardState.semesters.length;
+  const lastSemester = dashboardState.semesters[dashboardState.semesters.length - 1];
+  const latestCgpa = lastSemester ? lastSemester.cgpa : 0;
+  summary.textContent = `Saved semesters: ${totalSemesters}. Latest CGPA: ${latestCgpa}. Edit any semester from the saved-semester panel.`;
 }
 
-fetch(API+"/register",{
+async function loadSemesterContext() {
+  const studentId = getStudentId();
+  const semesterInput = document.getElementById("semester");
+  if (!studentId || !semesterInput || !semesterInput.value) {
+    return;
+  }
 
-method:"POST",
+  const semesterNo = Number(semesterInput.value);
 
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify(data)
-
-})
-
-.then(res=>res.json())
-
-.then(data=>{
-
-console.log("Register Response:", data)
-
-if(data.status === "success"){
-
-document.getElementById("register_msg").innerText =
-"Registration successful! Please login."
-
-showLogin()
-
-}
-else{
-
-document.getElementById("register_msg").innerText = data.message
-
+  try {
+    const data = await apiRequest(`/semester-context/${studentId}/${semesterNo}`);
+    document.getElementById("prev_cgpa").value = data.previous_cgpa;
+    document.getElementById("prev_credits").value = data.previous_credits;
+  } catch (error) {
+    setMessage("semester_msg", error.message, "error");
+  }
 }
 
-})
+function setSemesterMode(editSemester = null) {
+  dashboardState.editingSemester = editSemester;
+  const title = document.getElementById("semesterPanelTitle");
+  const saveButton = document.getElementById("saveSemesterBtn");
+  const cancelButton = document.getElementById("cancelEditBtn");
 
+  if (!title || !saveButton || !cancelButton) {
+    return;
+  }
+
+  if (editSemester) {
+    title.textContent = `Edit Semester ${editSemester}`;
+    saveButton.textContent = "Update Semester";
+    cancelButton.classList.remove("hidden");
+  } else {
+    title.textContent = "Semester Editor";
+    saveButton.textContent = "Save Semester";
+    cancelButton.classList.add("hidden");
+  }
 }
 
+function resetSemesterForm(nextSemester = null) {
+  fillSubjectTable("dashboardSubjectTable", []);
+  document.getElementById("dashboard_result").style.display = "none";
+  document.getElementById("semester").value = nextSemester || "";
+  document.getElementById("formula").value = "9.5";
+  document.getElementById("prev_cgpa").value = 0;
+  document.getElementById("prev_credits").value = 0;
+  setMessage("semester_msg", "");
+  setSemesterMode(null);
 
-/* ---------------------------
-LOGIN USER
---------------------------- */
-
-function login(){
-
-let username = document.getElementById("login_username").value
-let password = document.getElementById("login_password").value
-
-fetch(API+"/login",{
-
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-username:username,
-password:password
-})
-
-})
-
-.then(res=>res.json())
-
-.then(data=>{
-
-console.log("Login Response:", data)
-
-if(data.status === "success"){
-
-localStorage.setItem("student_id", data.student_id)
-localStorage.setItem("student_name", data.name)
-
-window.location.href = "dashboard.html"
-
-}
-else{
-
-document.getElementById("login_msg").innerText = data.message
-
+  if (nextSemester) {
+    loadSemesterContext();
+  }
 }
 
-})
+function renderHistory() {
+  const container = document.getElementById("semesterHistory");
+  if (!container) {
+    return;
+  }
 
+  if (!dashboardState.semesters.length) {
+    container.innerHTML = `<div class="empty-state">No semester has been saved yet. Start from the Semester Data panel.</div>`;
+    document.getElementById("stat_total_semesters").textContent = 0;
+    document.getElementById("stat_latest_cgpa").textContent = 0;
+    document.getElementById("stat_total_credits").textContent = 0;
+    updateSidebarSummary();
+    return;
+  }
+
+  const lastSemester = dashboardState.semesters[dashboardState.semesters.length - 1];
+  document.getElementById("stat_total_semesters").textContent = dashboardState.semesters.length;
+  document.getElementById("stat_latest_cgpa").textContent = lastSemester.cgpa;
+  document.getElementById("stat_total_credits").textContent = lastSemester.total_credits;
+
+  container.innerHTML = dashboardState.semesters.map((semester) => `
+    <div class="semester-item">
+      <div class="semester-top">
+        <div>
+          <h4>Semester ${semester.semester_no}</h4>
+          <div class="meta-row">
+            <div class="meta-chip">SGPA: ${semester.sgpa}</div>
+            <div class="meta-chip">CGPA: ${semester.cgpa}</div>
+            <div class="meta-chip">Credits: ${semester.total_credits}</div>
+          </div>
+        </div>
+        <button class="secondary-btn" type="button" onclick="editSemester(${semester.semester_no})">Edit Data</button>
+      </div>
+
+      <details class="subject-details">
+        <summary>View subject-wise data</summary>
+        <div class="subject-mini">
+          <table>
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Credit</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${semester.subjects.map((subject) => `
+                <tr>
+                  <td>${subject.subject_name}</td>
+                  <td>${subject.credit}</td>
+                  <td>${subject.grade}</td>
+                </tr>
+              `).join("")}
+            </tbody>
+          </table>
+        </div>
+      </details>
+    </div>
+  `).join("");
+
+  updateSidebarSummary();
 }
 
-
-/* ---------------------------
-SAVE SEMESTER
---------------------------- */
-
-function saveSemester(){
-
-let student_id = localStorage.getItem("student_id")
-
-let semester = document.getElementById("semester").value
-
-let subjects = getSubjects()
-
-fetch(API + "/save-semester", {
-
-method: "POST",
-
-headers: {
-"Content-Type": "application/json"
-},
-
-body: JSON.stringify({
-student_id: Number(student_id),
-semester: Number(semester),
-subjects: subjects
-})
-
-})
-
-.then(res => res.json())
-
-.then(data => {
-
-console.log("Save Semester Response:", data)
-
-alert(data.message || "Semester saved successfully!")
-
-loadDashboard()
-
-})
-
-.catch(err=>{
-console.log(err)
-})
-
+function populateProfile(profile) {
+  document.getElementById("profile_name").value = profile.name || "";
+  document.getElementById("profile_email").value = profile.email || "";
+  document.getElementById("profile_phone").value = profile.phone || "";
+  document.getElementById("profile_college").value = profile.college || "";
+  document.getElementById("profile_course").value = profile.course || "";
+  document.getElementById("profile_regno").value = profile.register_no || "";
+  document.getElementById("profile_username").value = profile.username || "";
+  document.getElementById("welcomeText").textContent = `Welcome ${profile.name || localStorage.getItem("student_name") || "Student"}`;
 }
 
+async function loadDashboard() {
+  const studentId = getStudentId();
+  if (!studentId) {
+    window.location.href = "index.html";
+    return;
+  }
 
-/* ---------------------------
-LOAD DASHBOARD HISTORY
---------------------------- */
+  try {
+    const profileData = await apiRequest(`/student/${studentId}`);
+    const dashboardData = await apiRequest(`/dashboard/${studentId}`);
 
-function loadDashboard(){
+    populateProfile(profileData.profile);
+    dashboardState.semesters = dashboardData.semesters;
+    renderHistory();
 
-let student_id=localStorage.getItem("student_id")
+    const nextSemester = dashboardState.semesters.length
+      ? Number(dashboardState.semesters[dashboardState.semesters.length - 1].semester_no) + 1
+      : 1;
 
-if(!student_id){
-alert("Please login first")
-window.location.href="index.html"
-return
+    resetSemesterForm(nextSemester);
+  } catch (error) {
+    setMessage("semester_msg", error.message, "error");
+  }
 }
 
-fetch(API+"/dashboard/"+student_id)
+async function saveProfile(event) {
+  event.preventDefault();
 
-.then(res=>res.json())
+  const studentId = getStudentId();
+  const payload = {
+    name: document.getElementById("profile_name").value.trim(),
+    email: document.getElementById("profile_email").value.trim(),
+    phone: document.getElementById("profile_phone").value.trim(),
+    college: document.getElementById("profile_college").value.trim(),
+    course: document.getElementById("profile_course").value.trim(),
+    register_no: document.getElementById("profile_regno").value.trim()
+  };
 
-.then(data=>{
+  try {
+    const data = await apiRequest(`/student/${studentId}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-let table=document.getElementById("historyTable")
-
-if(!table) return
-
-table.innerHTML=`
-<tr>
-<th>Semester</th>
-<th>SGPA</th>
-<th>CGPA</th>
-</tr>
-`
-
-data.semesters.forEach(sem=>{
-
-let row=table.insertRow()
-
-row.innerHTML=`
-<td>${sem.semester_no}</td>
-<td>${sem.sgpa}</td>
-<td>${sem.cgpa}</td>
-`
-
-})
-
-})
-
+    localStorage.setItem("student_name", payload.name);
+    setMessage("profile_msg", data.message, "success");
+    document.getElementById("welcomeText").textContent = `Welcome ${payload.name}`;
+  } catch (error) {
+    setMessage("profile_msg", error.message, "error");
+  }
 }
 
+async function saveSemesterData() {
+  const studentId = getStudentId();
+  const semesterNo = Number(document.getElementById("semester").value);
+  const payload = {
+    student_id: studentId,
+    semester: semesterNo,
+    subjects: getSubjects("dashboardSubjectTable")
+  };
 
-/* ---------------------------
-WELCOME MESSAGE
---------------------------- */
+  try {
+    const path = dashboardState.editingSemester ? "/update-semester" : "/save-semester";
+    const method = dashboardState.editingSemester ? "PUT" : "POST";
 
-window.onload=function(){
+    const data = await apiRequest(path, {
+      method,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
 
-let name=localStorage.getItem("student_name")
-
-if(name && document.getElementById("welcome")){
-document.getElementById("welcome").innerText="Welcome "+name
+    setMessage("semester_msg", data.message, "success");
+    await loadDashboard();
+    switchDashboardPanel("historyPanel");
+  } catch (error) {
+    setMessage("semester_msg", error.message, "error");
+  }
 }
 
-loadDashboard()
+function editSemester(semesterNo) {
+  const semester = dashboardState.semesters.find((item) => Number(item.semester_no) === Number(semesterNo));
+  if (!semester) {
+    return;
+  }
 
+  document.getElementById("semester").value = semester.semester_no;
+  document.getElementById("formula").value = "9.5";
+  fillSubjectTable("dashboardSubjectTable", semester.subjects.map((subject) => ({
+    name: subject.subject_name,
+    credit: subject.credit,
+    grade: subject.grade
+  })));
+  setSemesterMode(semester.semester_no);
+  switchDashboardPanel("semesterPanel");
+  loadSemesterContext();
+  document.getElementById("dashboard_result").style.display = "none";
+  setMessage("semester_msg", `Editing Semester ${semester.semester_no}.`, "success");
 }
+
+function logout() {
+  localStorage.removeItem("student_id");
+  localStorage.removeItem("student_name");
+  window.location.href = "index.html";
+}
+
+function initLandingPage() {
+  const loginForm = document.getElementById("loginForm");
+  const registerForm = document.getElementById("registerForm");
+
+  if (!loginForm || !registerForm) {
+    return;
+  }
+
+  document.getElementById("loginTab").addEventListener("click", () => switchAuthTab(true));
+  document.getElementById("registerTab").addEventListener("click", () => switchAuthTab(false));
+  document.getElementById("switchToRegister").addEventListener("click", () => switchAuthTab(false));
+  loginForm.addEventListener("submit", handleLogin);
+  registerForm.addEventListener("submit", handleRegister);
+}
+
+function initCalculatorPage() {
+  if (!document.getElementById("calculatorSubjectTable")) {
+    return;
+  }
+
+  document.getElementById("calcAddSubject").addEventListener("click", () => addSubjectRow("calculatorSubjectTable"));
+  document.getElementById("calcRemoveSubject").addEventListener("click", () => removeSubjectRow("calculatorSubjectTable"));
+  document.getElementById("directCalculateBtn").addEventListener("click", async () => {
+    try {
+      await calculateForTable({
+        tableId: "calculatorSubjectTable",
+        prevCgpaId: "calc_prev_cgpa",
+        prevCreditsId: "calc_prev_credits",
+        formulaId: "calc_formula",
+        resultPrefix: "calculator",
+        messageId: "calculator_msg"
+      });
+    } catch (error) {
+      setMessage("calculator_msg", error.message, "error");
+    }
+  });
+}
+
+function initDashboardPage() {
+  if (!document.getElementById("dashboardSubjectTable")) {
+    return;
+  }
+
+  document.querySelectorAll(".sidebar-btn").forEach((button) => {
+    button.addEventListener("click", () => switchDashboardPanel(button.dataset.panel));
+  });
+
+  document.getElementById("profileForm").addEventListener("submit", saveProfile);
+  document.getElementById("dashAddSubject").addEventListener("click", () => addSubjectRow("dashboardSubjectTable"));
+  document.getElementById("dashRemoveSubject").addEventListener("click", () => removeSubjectRow("dashboardSubjectTable"));
+  document.getElementById("semester").addEventListener("change", () => {
+    loadSemesterContext();
+    if (!dashboardState.editingSemester) {
+      setMessage("semester_msg", "Previous CGPA and credits loaded automatically.", "success");
+    }
+  });
+  document.getElementById("calculateSemesterBtn").addEventListener("click", async () => {
+    try {
+      await calculateForTable({
+        tableId: "dashboardSubjectTable",
+        prevCgpaId: "prev_cgpa",
+        prevCreditsId: "prev_credits",
+        formulaId: "formula",
+        resultPrefix: "dashboard",
+        messageId: "semester_msg"
+      });
+    } catch (error) {
+      setMessage("semester_msg", error.message, "error");
+    }
+  });
+  document.getElementById("saveSemesterBtn").addEventListener("click", saveSemesterData);
+  document.getElementById("cancelEditBtn").addEventListener("click", () => {
+    const nextSemester = dashboardState.semesters.length
+      ? Number(dashboardState.semesters[dashboardState.semesters.length - 1].semester_no) + 1
+      : 1;
+    resetSemesterForm(nextSemester);
+  });
+  document.getElementById("logoutBtn").addEventListener("click", logout);
+
+  loadDashboard();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initLandingPage();
+  initCalculatorPage();
+  initDashboardPage();
+});
+

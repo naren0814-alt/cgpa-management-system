@@ -1,159 +1,238 @@
-<!DOCTYPE html><html>
+﻿<!DOCTYPE html>
+<html lang="en">
 <head>
-<title>CGPA Dashboard</title>
-<link rel="stylesheet" href="style.css">
-</head><body style="font-family:Arial;background:linear-gradient(135deg,#89f7fe,#66a6ff);text-align:center;"><h1 style="animation:fadeIn 1s;">🎓 Student Dashboard</h1><h2 id="welcome"></h2><div style="
-background:white;
-padding:25px;
-border-radius:12px;
-width:70%;
-margin:auto;
-box-shadow:0 10px 30px rgba(0,0,0,0.2);
-animation:slideUp 0.8s;
-"><h3>📚 Enter Subjects</h3><table id="subjectTable" style="width:100%;margin:auto;border-collapse:collapse;"><tr>
-<th>S.No</th>
-<th>Subject Name</th>
-<th>Credits</th>
-<th>Grade</th>
-</tr><tr>
-<td>1</td><td>
-<input type="text" placeholder="Subject 1">
-</td><td>
-<input type="number">
-</td><td>
-<select>
-<option>O</option>
-<option>A+</option>
-<option>A</option>
-<option>B+</option>
-<option>B</option>
-<option>C</option>
-</select>
-</td></tr></table><br><button onclick="addSubject()" style="
-background:#4CAF50;
-color:white;
-border:none;
-padding:10px 18px;
-border-radius:6px;
-cursor:pointer;
-margin:5px;
-transition:0.3s;
-">
-Add Subject
-</button>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <div class="smoke-bg">
+      <div class="smoke-orb smoke-orb-1"></div>
+      <div class="smoke-orb smoke-orb-2"></div>
+      <div class="smoke-orb smoke-orb-3"></div>
+    </div>
 
-<button onclick="removeSubject()" style="
-background:#f44336;
-color:white;
-border:none;
-padding:10px 18px;
-border-radius:6px;
-cursor:pointer;
-margin:5px;
-transition:0.3s;
-">
-Remove Subject
-</button>
+    <div class="container">
+      <nav class="top-nav">
+        <div class="brand">
+          <div class="brand-badge">CG</div>
+          <div class="brand-copy">
+            <h1>Student Dashboard</h1>
+            <p id="welcomeText">Manage semester records and profile</p>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <a class="nav-link" href="index.html">Home</a>
+          <a class="nav-link" href="calculator.html">Calculator</a>
+          <button class="ghost-btn" type="button" id="logoutBtn">Logout</button>
+        </div>
+      </nav>
 
-<br><br>
+      <header class="page-header">
+        <div>
+          <h2>Academic workspace</h2>
+          <p>Use the sidebar to switch between your profile, semester editor, and saved semester history.</p>
+        </div>
+      </header>
 
-<b>Previous CGPA</b>
-<input id="prev_cgpa" type="number" value="0">
+      <section class="dashboard-layout">
+        <aside class="glass-card sidebar">
+          <h3 class="mini-title">Dashboard Menu</h3>
+          <p class="soft-text">Everything stays in the same simple flow so it is easy to follow and learn from.</p>
 
-<b>Previous Credits</b>
-<input id="prev_credits" type="number" value="0">
+          <div class="sidebar-menu">
+            <button class="sidebar-btn active" type="button" data-panel="profilePanel">Profile</button>
+            <button class="sidebar-btn" type="button" data-panel="semesterPanel">Semester Data</button>
+            <button class="sidebar-btn" type="button" data-panel="historyPanel">Saved Semesters</button>
+          </div>
 
-<br><br>
+          <div class="sidebar-note" id="sidebarSummary">
+            Semester details and previous CGPA values will auto-load here after your data is fetched.
+          </div>
+        </aside>
 
-<select id="formula">
-<option value="9.5">CGPA × 9.5</option>
-<option value="10">CGPA × 10</option>
-</select><br><br>
+        <div class="dashboard-main">
+          <section class="glass-card panel-card" id="profilePanel">
+            <div class="panel-head">
+              <div>
+                <h3>Profile</h3>
+                <p>Update your student information without leaving the dashboard.</p>
+              </div>
+            </div>
 
-<button onclick="calculate()" style="
-background:#673ab7;
-color:white;
-border:none;
-padding:12px 22px;
-border-radius:6px;
-cursor:pointer;
-font-size:16px;
-transition:0.3s;
-">
-Calculate
-</button>
+            <form id="profileForm">
+              <div class="field-grid">
+                <div class="input-wrap">
+                  <label for="profile_name">Full Name</label>
+                  <input id="profile_name" type="text" required>
+                </div>
+                <div class="input-wrap">
+                  <label for="profile_email">Email</label>
+                  <input id="profile_email" type="email" required>
+                </div>
+              </div>
 
-<h3 id="result"></h3><br><h3>💾 Save Semester</h3>Semester Number
-<input id="semester" type="number" placeholder="Semester">
+              <div class="field-grid">
+                <div class="input-wrap">
+                  <label for="profile_phone">Phone</label>
+                  <input id="profile_phone" type="text">
+                </div>
+                <div class="input-wrap">
+                  <label for="profile_college">College</label>
+                  <input id="profile_college" type="text">
+                </div>
+              </div>
 
-<button onclick="saveSemester()" style="
-background:#2196F3;
-color:white;
-border:none;
-padding:10px 20px;
-border-radius:6px;
-cursor:pointer;
-margin-left:10px;
-transition:0.3s;
-">
-Save Semester
-</button>
+              <div class="field-grid">
+                <div class="input-wrap">
+                  <label for="profile_course">Course</label>
+                  <input id="profile_course" type="text">
+                </div>
+                <div class="input-wrap">
+                  <label for="profile_regno">Register Number</label>
+                  <input id="profile_regno" type="text" required>
+                </div>
+              </div>
 
-<br><br>
+              <div class="field-grid">
+                <div class="input-wrap">
+                  <label for="profile_username">Username</label>
+                  <input id="profile_username" type="text" readonly>
+                </div>
+              </div>
 
-<h2>📊 Semester History</h2><table border="1" id="historyTable" style="
-width:60%;
-margin:auto;
-border-collapse:collapse;
-background:white;
-"><tr>
-<th>Semester</th>
-<th>SGPA</th>
-<th>CGPA</th>
-</tr></table></div><style>
+              <button class="primary-btn" type="submit">Save Profile</button>
+              <div id="profile_msg" class="form-message"></div>
+            </form>
+          </section>
 
-@keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(20px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
+          <section class="glass-card panel-card hidden" id="semesterPanel">
+            <div class="panel-head">
+              <div>
+                <h3 id="semesterPanelTitle">Semester Editor</h3>
+                <p>Create a semester record or edit an existing one from the saved-semester list.</p>
+              </div>
+              <div class="action-row">
+                <button class="secondary-btn" type="button" id="dashAddSubject">Add Subject</button>
+                <button class="ghost-btn" type="button" id="dashRemoveSubject">Remove Subject</button>
+              </div>
+            </div>
 
-@keyframes slideUp{
-from{
-opacity:0;
-transform:translateY(40px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
+            <div class="field-grid">
+              <div class="input-wrap">
+                <label for="semester">Semester Number</label>
+                <input id="semester" type="number" min="1" placeholder="Semester number">
+              </div>
+              <div class="input-wrap">
+                <label for="formula">Percentage Formula</label>
+                <select id="formula">
+                  <option value="9.5">CGPA x 9.5</option>
+                  <option value="10">CGPA x 10</option>
+                  <option value="custom">(CGPA - 0.5) x 10</option>
+                </select>
+              </div>
+            </div>
 
-button:hover{
-transform:scale(1.05);
-box-shadow:0 6px 15px rgba(0,0,0,0.2);
-}
+            <div class="field-grid">
+              <div class="input-wrap">
+                <label for="prev_cgpa">Previous CGPA</label>
+                <input id="prev_cgpa" type="number" value="0" readonly>
+              </div>
+              <div class="input-wrap">
+                <label for="prev_credits">Previous Credits</label>
+                <input id="prev_credits" type="number" value="0" readonly>
+              </div>
+            </div>
 
-input,select{
-padding:8px;
-border-radius:5px;
-border:1px solid #ccc;
-margin:5px;
-}
+            <div class="table-shell">
+              <table id="dashboardSubjectTable">
+                <thead>
+                  <tr>
+                    <th>S.No</th>
+                    <th>Subject Name</th>
+                    <th>Credits</th>
+                    <th>Grade</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td><input type="text" placeholder="Subject 1"></td>
+                    <td><input type="number" min="0" step="0.5" placeholder="Credits"></td>
+                    <td>
+                      <select>
+                        <option>O</option>
+                        <option>A+</option>
+                        <option>A</option>
+                        <option>B+</option>
+                        <option>B</option>
+                        <option>C</option>
+                      </select>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-th{
-background:#f2f2f2;
-padding:8px;
-}
+            <div class="action-row" style="margin-top: 18px;">
+              <button class="secondary-btn" type="button" id="calculateSemesterBtn">Calculate</button>
+              <button class="primary-btn" type="button" id="saveSemesterBtn">Save Semester</button>
+              <button class="ghost-btn hidden" type="button" id="cancelEditBtn">Cancel Edit</button>
+            </div>
 
-td{
-padding:8px;
-}
+            <div id="semester_msg" class="form-message"></div>
+            <div class="result-box" id="dashboard_result" style="display: none;">
+              <div class="stat">
+                <span>SGPA</span>
+                <strong id="dash_sgpa">0</strong>
+              </div>
+              <div class="stat">
+                <span>CGPA</span>
+                <strong id="dash_cgpa">0</strong>
+              </div>
+              <div class="stat">
+                <span>Percentage</span>
+                <strong id="dash_percentage">0</strong>
+              </div>
+            </div>
+          </section>
 
-</style><script src="script.js"></script></body>
+          <section class="glass-card panel-card hidden" id="historyPanel">
+            <div class="panel-head">
+              <div>
+                <h3>Saved Semesters</h3>
+                <p>Each semester shows SGPA, CGPA, credits, and subject-wise data in a dropdown.</p>
+              </div>
+            </div>
+
+            <div class="stat-strip" id="historyStats">
+              <div class="stat">
+                <span>Total Semesters</span>
+                <strong id="stat_total_semesters">0</strong>
+              </div>
+              <div class="stat">
+                <span>Latest CGPA</span>
+                <strong id="stat_latest_cgpa">0</strong>
+              </div>
+              <div class="stat">
+                <span>Total Credits</span>
+                <strong id="stat_total_credits">0</strong>
+              </div>
+            </div>
+
+            <div id="semesterHistory" class="semester-list" style="margin-top: 18px;"></div>
+          </section>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
+

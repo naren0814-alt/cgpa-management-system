@@ -1,0 +1,133 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Direct CGPA Calculator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <div class="smoke-bg">
+      <div class="smoke-orb smoke-orb-1"></div>
+      <div class="smoke-orb smoke-orb-2"></div>
+      <div class="smoke-orb smoke-orb-3"></div>
+    </div>
+
+    <div class="container">
+      <nav class="top-nav">
+        <div class="brand">
+          <div class="brand-badge">CG</div>
+          <div class="brand-copy">
+            <h1>Direct Calculator</h1>
+            <p>Quick SGPA, CGPA and percentage check</p>
+          </div>
+        </div>
+        <div class="nav-actions">
+          <a class="nav-link" href="index.html">Home</a>
+          <a class="nav-link active" href="calculator.html">Calculator</a>
+        </div>
+      </nav>
+
+      <header class="page-header">
+        <div>
+          <h2>Calculate without login</h2>
+          <p>Enter subjects, credits and grades. You can also include previous CGPA and total credits.</p>
+        </div>
+      </header>
+
+      <section class="glass-card calc-card">
+        <div class="panel-head">
+          <div>
+            <h3>Direct CGPA Calculator</h3>
+            <p>This page is connected to the Flask backend calculation API.</p>
+          </div>
+          <div class="action-row">
+            <button class="secondary-btn" type="button" id="calcAddSubject">Add Subject</button>
+            <button class="ghost-btn" type="button" id="calcRemoveSubject">Remove Subject</button>
+          </div>
+        </div>
+
+        <div class="table-shell">
+          <table id="calculatorSubjectTable">
+            <thead>
+              <tr>
+                <th>S.No</th>
+                <th>Subject Name</th>
+                <th>Credits</th>
+                <th>Grade</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1</td>
+                <td><input type="text" placeholder="Subject 1"></td>
+                <td><input type="number" min="0" step="0.5" placeholder="Credits"></td>
+                <td>
+                  <select>
+                    <option>O</option>
+                    <option>A+</option>
+                    <option>A</option>
+                    <option>B+</option>
+                    <option>B</option>
+                    <option>C</option>
+                  </select>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="field-grid" style="margin-top: 18px;">
+          <div class="input-wrap">
+            <label for="calc_prev_cgpa">Previous CGPA</label>
+            <input id="calc_prev_cgpa" type="number" min="0" step="0.01" value="0">
+          </div>
+          <div class="input-wrap">
+            <label for="calc_prev_credits">Previous Credits</label>
+            <input id="calc_prev_credits" type="number" min="0" step="0.5" value="0">
+          </div>
+        </div>
+
+        <div class="field-grid" style="margin-top: 4px;">
+          <div class="input-wrap">
+            <label for="calc_formula">Percentage Formula</label>
+            <select id="calc_formula">
+              <option value="9.5">CGPA x 9.5</option>
+              <option value="10">CGPA x 10</option>
+              <option value="custom">(CGPA - 0.5) x 10</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="primary-btn" type="button" id="directCalculateBtn">Calculate</button>
+          <a class="secondary-btn" href="index.html">Back to Home</a>
+        </div>
+
+        <div id="calculator_msg" class="form-message"></div>
+        <div class="result-box" id="calculator_result" style="display: none;">
+          <div class="stat">
+            <span>SGPA</span>
+            <strong id="calc_sgpa">0</strong>
+          </div>
+          <div class="stat">
+            <span>CGPA</span>
+            <strong id="calc_cgpa">0</strong>
+          </div>
+          <div class="stat">
+            <span>Percentage</span>
+            <strong id="calc_percentage">0</strong>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
